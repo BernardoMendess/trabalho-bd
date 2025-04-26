@@ -38,11 +38,11 @@ BEGIN
     FROM matches
     WHERE
         (mapa_especifico IS NULL OR maps = mapa_especifico)
-	    AND
-	    (
-            (team1_name = time_a AND team2_name = time_b)
-            OR
-            (team1_name = time_b AND team2_name = time_a)
+	 AND
+	 (
+             (team1_name = time_a AND team2_name = time_b)
+             OR
+             (team1_name = time_b AND team2_name = time_a)
         );
 
     IF partidas_array IS NULL THEN
@@ -52,7 +52,7 @@ BEGIN
 
     total_partidas := cardinality(partidas_array);
 
-	-- Verifica quem ganhou cada uma das matches
+    -- Verifica quem ganhou cada uma das matches
     FOR i IN 1..total_partidas LOOP
         SELECT * INTO partidas FROM matches WHERE match_id = partidas_array[i];
 
@@ -67,7 +67,7 @@ BEGIN
         END IF;
     END LOOP;
 
-	-- Achar última match
+    -- Achar última match
     SELECT *
     INTO ultima_match
     FROM matches
