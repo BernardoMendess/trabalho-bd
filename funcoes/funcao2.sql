@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION analisar_confrontos(
     mapa_especifico TEXT DEFAULT NULL -- Quando é nulo, todos os mapas são considerados
 )
 RETURNS TABLE (
-	mapa_considerado TEXT,
+    mapa_considerado TEXT,
     total_partidas INTEGER,
     vitorias_time_a INTEGER,
     vitorias_time_b INTEGER,
@@ -37,10 +37,10 @@ BEGIN
     INTO partidas_array
     FROM matches
     WHERE
-		(mapa_especifico IS NULL OR maps = mapa_especifico)
-		AND
-		(
-        	(team1_name = time_a AND team2_name = time_b)
+        (mapa_especifico IS NULL OR maps = mapa_especifico)
+	    AND
+	    (
+            (team1_name = time_a AND team2_name = time_b)
             OR
             (team1_name = time_b AND team2_name = time_a)
         );
