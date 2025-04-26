@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION generate_event_ranking(
+CREATE OR REPLACE FUNCTION ranking_evento(
 	evento_nome VARCHAR,
 	inicio_ranking INT DEFAULT 1,
 	fim_ranking INT DEFAULT 10
