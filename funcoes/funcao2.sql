@@ -82,7 +82,7 @@ BEGIN
     END IF;
 
     RETURN QUERY SELECT 
-		COALESCE(mapa_especifico, 'Todos'),
+        COALESCE(mapa_especifico, 'Todos'),
         total_partidas,
         cont_vitorias_a,
         cont_vitorias_b,
