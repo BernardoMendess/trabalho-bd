@@ -4,35 +4,31 @@ CREATE OR REPLACE FUNCTION gerar_distribuicao_resultados(
 )
 RETURNS TABLE (
     placar TEXT,
-    quantidade INTEGER,
+    quantidade BIGINT,
     percentual NUMERIC(5,2),
-    vitorias_time INTEGER,
+    vitorias_time BIGINT,
     percentual_vitorias_time NUMERIC(5,2)
 )
 AS $$
 DECLARE
     total_partidas INTEGER;
 BEGIN
-    -- Conta o total de partidas filtradas
     SELECT COUNT(*)
     INTO total_partidas
     FROM matches
     WHERE (evento_nome IS NULL OR event_name = evento_nome)
       AND (time_escolhido IS NULL OR team1_name = time_escolhido OR team2_name = time_escolhido);
 
-    -- Se não tem partidas, retorna vazio
     IF total_partidas = 0 THEN
         RETURN;
     END IF;
 
     RETURN QUERY
     SELECT
-        -- Monta o placar no formato '16x14', '16x12', etc.
         CONCAT(GREATEST(team1_result, team2_result), 'x', LEAST(team1_result, team2_result)) AS placar,
         COUNT(*) AS quantidade,
         ROUND((COUNT(*) * 100.0) / total_partidas, 2) AS percentual,
         
-        -- Contabiliza vitórias se time_escolhido for informado
         CASE
             WHEN time_escolhido IS NOT NULL THEN
                 SUM(
@@ -68,3 +64,5 @@ BEGIN
     ORDER BY quantidade DESC;
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT * FROM gerar_distribuicao_resultados('IEM Katowice 2025', 'Faze Clan');
