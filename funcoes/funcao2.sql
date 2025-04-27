@@ -32,9 +32,9 @@ DECLARE
     cont_vitorias_a INT := 0; 
     cont_vitorias_b INT := 0;
     ultima_match RECORD;
-	percentual_vitorias_a NUMERIC;
-	percentual_vitorias_b NUMERIC;
-	data_hora_ultima_match TEXT;
+    percentual_vitorias_a NUMERIC;
+    percentual_vitorias_b NUMERIC;
+    data_hora_ultima_match TEXT;
 BEGIN
     SELECT array_agg(match_id)
     INTO partidas_array
