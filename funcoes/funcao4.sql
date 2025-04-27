@@ -20,7 +20,8 @@ DECLARE
     num_vitorias INTEGER := 0;
     num_vitorias_primeiro INTEGER := 0;
     num_vitorias_segundo INTEGER := 0;
-
+	temporario DATE;
+	
     num_total_aux INTEGER := 0;
     num_jogos_primeiro INTEGER :=0;
     num_jogos_segundo INTEGER :=0;
@@ -57,7 +58,12 @@ BEGIN
         seq_max_vit := GREATEST(seq_max_vit, aux_seq_max);
         seq_max_derrotas := GREATEST(seq_max_derrotas, aux_seq_max_derrota);
 
-
+		IF primeiro_intervalo > segundo_intervalo THEN
+			temporario := primeiro_intervalo;
+			primeiro_intervalo := segundo_intervalo;
+			segundo_intervalo := temporario;
+		END IF;
+			
 		IF jogo_aux.match_time::date <= primeiro_intervalo THEN
 			num_jogos_primeiro := num_jogos_primeiro +1;
 			IF (jogo_aux.team1_name = time_escolhido AND jogo_aux.team1_result = 16 AND jogo_aux.team1_result > jogo_aux.team2_result) OR
@@ -66,29 +72,29 @@ BEGIN
 			END IF;
 		END IF;
 
-		IF jogo_aux.match_time::date <= segundo_intervalo THEN
+		IF primeiro_intervalo <= segundo_intervalo THEN
 			num_jogos_segundo := num_jogos_segundo +1;
 			IF (jogo_aux.team1_name = time_escolhido AND jogo_aux.team1_result = 16 AND jogo_aux.team1_result > jogo_aux.team2_result) OR
-           		(jogo_aux.team2_name = time_escolhido AND jogo_aux.team2_result = 16 AND jogo_aux.team2_result > jogo_aux.team1_result) THEN
+				(jogo_aux.team2_name = time_escolhido AND jogo_aux.team2_result = 16 AND jogo_aux.team2_result > jogo_aux.team1_result) THEN
 				num_vitorias_segundo := num_vitorias_segundo +1;
 			END IF;
 		END IF;
 
 
-    END LOOP;
+    END LOOP; 
 
 	IF num_total_aux > 0 THEN
-		taxa_num := (num_vitorias::NUMERIC / num_total_aux::NUMERIC) * 100; 
+		taxa_num := ROUND((num_vitorias::NUMERIC / num_total_aux::NUMERIC) * 100, 2); 
 	ELSE
 		taxa_num := 0; 
 	END IF;
 
 	IF num_jogos_primeiro > 0 THEN
-		aproveitamento_primeiro := (num_vitorias_primeiro::NUMERIC / num_jogos_primeiro::NUMERIC) * 100;
+		aproveitamento_primeiro := ROUND((num_vitorias_primeiro::NUMERIC / num_jogos_primeiro::NUMERIC) * 100, 2);
 	END IF;
 
 	IF num_jogos_segundo > 0 THEN
-		aproveitamento_segundo := (num_vitorias_segundo::NUMERIC / num_jogos_segundo::NUMERIC) * 100;
+		aproveitamento_segundo := ROUND((num_vitorias_segundo::NUMERIC / num_jogos_segundo::NUMERIC) * 100, 2);
 	END IF;
 
 	diferenca_porcentual := aproveitamento_segundo - aproveitamento_primeiro;
