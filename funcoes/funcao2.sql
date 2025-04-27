@@ -21,7 +21,7 @@ RETURNS TABLE (
     vitorias_time_b INTEGER,
     percentual_vitorias_time_a NUMERIC(5,2),
     percentual_vitorias_time_b NUMERIC(5,2),
-    data_ultimo_confronto TEXT,
+    data_hora_ultimo_confronto TEXT,
     vencedor_ultima_match TEXT
 )
 AS $$
@@ -32,6 +32,9 @@ DECLARE
     cont_vitorias_a INT := 0; 
     cont_vitorias_b INT := 0;
     ultima_match RECORD;
+	percentual_vitorias_a NUMERIC;
+	percentual_vitorias_b NUMERIC;
+	data_hora_ultima_match TEXT;
 BEGIN
     SELECT array_agg(match_id)
     INTO partidas_array
@@ -81,14 +84,22 @@ BEGIN
         vencedor_ultima_match := ultima_match.team2_name;
     END IF;
 
+    percentual_vitorias_a := ROUND(
+        (cont_vitorias_a::numeric / total_partidas::numeric) * 100, 2);
+	
+    percentual_vitorias_b := ROUND(
+        (cont_vitorias_b::numeric / total_partidas::numeric) * 100, 2);
+
+    data_hora_ultima_match := TO_CHAR(ultima_match.match_time, 'DD/MM/YYYY HH24:MI');
+
     RETURN QUERY SELECT 
         COALESCE(mapa_especifico, 'Todos'),
         total_partidas,
         cont_vitorias_a,
         cont_vitorias_b,
-        ROUND((cont_vitorias_a::numeric / total_partidas::numeric) * 100, 2),
-        ROUND((cont_vitorias_b::numeric / total_partidas::numeric) * 100, 2),
-        TO_CHAR(ultima_match.match_time, 'DD/MM/YYYY HH24:MI'),
+        percentual_vitorias_a,
+        percentual_vitorias_b,
+        data_hora_ultima_match,
         vencedor_ultima_match;
 END;
 $$ LANGUAGE plpgsql;
