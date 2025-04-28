@@ -1,18 +1,7 @@
-CREATE TABLE IF NOT EXISTS matches (
-    match_id BIGINT PRIMARY KEY,
-    event_name VARCHAR(255),
-    maps VARCHAR(10),
-    match_time TIMESTAMP,
-    team1_name VARCHAR(100),
-    team1_result INT,
-    team2_name VARCHAR(100),
-    team2_result INT
-);
-
 CREATE OR REPLACE FUNCTION analisar_confrontos(
     time_a TEXT,
     time_b TEXT,
-    mapa_especifico TEXT DEFAULT NULL -- Quando é nulo, todos os mapas são considerados
+    mapa_especifico TEXT DEFAULT NULL
 )
 RETURNS TABLE (
     mapa_considerado TEXT,
@@ -55,7 +44,6 @@ BEGIN
 
     total_partidas := cardinality(partidas_array);
 
-    -- Verifica quem ganhou cada uma das matches
     FOR i IN 1..total_partidas LOOP
         SELECT * INTO partidas FROM matches WHERE match_id = partidas_array[i];
 
@@ -70,7 +58,6 @@ BEGIN
         END IF;
     END LOOP;
 
-    -- Achar última match
     SELECT *
     INTO ultima_match
     FROM matches
@@ -113,3 +100,5 @@ SELECT * FROM analisar_confrontos('Cloud9', 'Furia', 'Cache');
 
 SELECT * FROM analisar_confrontos('MIBR', 'NaVi');
 SELECT * FROM analisar_confrontos('MIBR', 'NaVi', 'Mirage');
+
+DROP FUNCTION analisar_confrontos;

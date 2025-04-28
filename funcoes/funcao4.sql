@@ -116,23 +116,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
---TESTES -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 SELECT * FROM momentum_time('Faze Clan','2024-08-22',10,6,'2025-08-26','2025-01-22')
 
 DROP FUNCTION momentum_time;
-DROP TABLE aux_table;
-
-
-SELECT COUNT(*) 
-FROM matches
-WHERE 'Faze Clan' = matches.team1_name
-  AND matches.match_time >= '2025-08-22'::TIMESTAMP
-  AND matches.match_time <= '2025-08-22'::TIMESTAMP + ((4 * 7) + (2 * 30) || ' days')::INTERVAL;
-
-SELECT *
-FROM matches
-WHERE ('G2 Esports' = matches.team1_name OR 'G2 Esports' = matches.team2_name)  -- Parentheses are key
-  AND matches.match_time >= '2025-08-22'::TIMESTAMP
-  AND matches.match_time <= '2025-08-22'::TIMESTAMP + ((4 * 7) + (2 * 30) || ' days')::INTERVAL
-ORDER BY match_time;

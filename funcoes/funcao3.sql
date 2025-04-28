@@ -65,4 +65,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT * FROM gerar_distribuicao_resultados('IEM Katowice 2025', 'Faze Clan');
+SELECT * FROM gerar_distribuicao_resultados('ESL Pro League S19', 'Vitality');
+
+DROP FUNCTION gerar_distribuicao_resultados;

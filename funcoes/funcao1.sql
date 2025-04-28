@@ -70,4 +70,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-SELECT * FROM ranking_evento('Blast World Final 2025', 1, 5);
+SELECT * FROM ranking_evento('Blast World Final 2025', 1, 10);
+
+DROP FUNCTION ranking_evento;
