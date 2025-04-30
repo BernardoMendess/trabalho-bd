@@ -16,7 +16,7 @@ RETURNS TABLE (
 AS $$
 DECLARE
     partidas RECORD;
-    partidas_array BIGINT[];
+    partidas_array INT[];
     total_partidas INT := 0;
     cont_vitorias_a INT := 0; 
     cont_vitorias_b INT := 0;
@@ -27,13 +27,13 @@ BEGIN
     INTO partidas_array
     FROM matches
     WHERE
-        (mapa IS NULL OR maps = mapa)
-	AND
 	(
      		(team1_name = time_a AND team2_name = time_b)
         	OR
         	(team1_name = time_b AND team2_name = time_a)
-     	);
+     	)
+     	AND
+     	(maps = mapa OR mapa IS NULL);
 
     IF partidas_array IS NULL THEN
         RETURN QUERY SELECT COALESCE(mapa, 'Todos'), 0, 0, 0, 'Não há', 'Não há';
