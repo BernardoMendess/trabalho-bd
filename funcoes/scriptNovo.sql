@@ -1,16 +1,6 @@
-CREATE TABLE matches (
-    match_id BIGINT PRIMARY KEY,
-    evento_id INT,
-    maps VARCHAR(10),
-    match_time TIMESTAMP,
-    team1_id INT,
-    team1_result INT,
-    team2_id INT,
-    team2_result INT,
-    FOREIGN KEY (evento_id) REFERENCES eventos(evento_id),
-    FOREIGN KEY (team1_id) REFERENCES times(time_id),
-    FOREIGN KEY (team2_id) REFERENCES times(time_id)
-);
+drop table matches;
+drop table eventos;
+drop table times;
 
 CREATE TABLE eventos (
     evento_id SERIAL PRIMARY KEY,
@@ -28,6 +18,44 @@ CREATE TABLE times (
     data_fundacao DATE,
     ranking_atual INT
 );
+
+CREATE TABLE matches (
+    match_id BIGINT PRIMARY KEY,
+    evento_id INT,
+    maps VARCHAR(10),
+    match_time TIMESTAMP,
+    team1_id INT,
+    team1_result INT,
+    team2_id INT,
+    team2_result INT,
+    FOREIGN KEY (evento_id) REFERENCES eventos(evento_id),
+    FOREIGN KEY (team1_id) REFERENCES times(time_id),
+    FOREIGN KEY (team2_id) REFERENCES times(time_id)
+);
+
+INSERT INTO times (nome_time, pais, data_fundacao, ranking_atual) VALUES
+('Faze Clan', 'Internacional', '2016-01-01', 1),
+('NaVi', 'Ucrânia', '2009-12-17', 2),
+('G2 Esports', 'Europa', '2014-10-15', 3),
+('Vitality', 'França', '2013-08-01', 4),
+('Heroic', 'Dinamarca', '2016-08-01', 5),
+('Furia', 'Brasil', '2017-01-01', 6),
+('Cloud9', 'Estados Unidos', '2014-08-01', 7),
+('MIBR', 'Brasil', '2003-01-01', 8),
+('Team Spirit', 'Rússia', '2015-09-01', 9),
+('Astralis', 'Dinamarca', '2016-01-01', 10); 
+
+INSERT INTO eventos (nome_evento, organizador, localizacao, data_inicio, data_fim) VALUES
+('IEM Katowice 2025', 'ESL', 'Katowice, Polônia', '2025-01-10', '2025-01-25'),
+('ESL Pro League S19', 'ESL', 'Online/Europe', '2025-02-05', '2025-02-16'),
+('Blast Premier 2025', 'Blast', 'Copenhagen, Dinamarca', '2025-03-15', '2025-03-30'),
+('PGL Major 2025', 'PGL', 'Bucareste, Romênia', '2025-04-20', '2025-05-04'),
+('IEM Cologne 2025', 'ESL', 'Colônia, Alemanha', '2025-05-12', '2025-05-25'),
+('ESL One 2025', 'ESL', 'Berlim, Alemanha', '2025-06-08', '2025-06-15'),
+('Blast World Final 2025', 'Blast', 'Abu Dhabi, EAU', '2025-07-22', '2025-07-27'),
+('IEM Rio 2025', 'ESL', 'Rio de Janeiro, Brasil', '2025-08-14', '2025-08-24'),
+('Thunderpick WC 2025', 'Thunderpick', 'Online/Global', '2025-09-05', '2025-09-16'),
+('Gamers8 2025', 'Saudi Esports Federation', 'Riade, Arábia Saudita', '2025-10-10', '2025-10-21');
 
 INSERT INTO matches(match_id, evento_id, maps, match_time, team1_id, team1_result, team2_id, team2_result) VALUES 
 (1, 1, 'Mirage', '2025-01-10 14:00:00', 1, 16, 2, 12),
@@ -230,27 +258,3 @@ INSERT INTO matches(match_id, evento_id, maps, match_time, team1_id, team1_resul
 (198, 10, 'Anubis', '2025-10-20 21:00:00', 5, 16, 9, 11),
 (199, 10, 'Cache', '2025-10-20 22:45:00', 7, 16, 6, 13),
 (200, 10, 'Train', '2025-10-21 20:00:00', 10, 16, 8, 7);
-
-INSERT INTO times (nome_time, pais, data_fundacao, ranking_atual) VALUES
-('Faze Clan', 'Internacional', '2016-01-01', 1),
-('NaVi', 'Ucrânia', '2009-12-17', 2),
-('G2 Esports', 'Europa', '2014-10-15', 3),
-('Vitality', 'França', '2013-08-01', 4),
-('Heroic', 'Dinamarca', '2016-08-01', 5),
-('Furia', 'Brasil', '2017-01-01', 6),
-('Cloud9', 'Estados Unidos', '2014-08-01', 7),
-('MIBR', 'Brasil', '2003-01-01', 8),
-('Team Spirit', 'Rússia', '2015-09-01', 9),
-('Astralis', 'Dinamarca', '2016-01-01', 10); 
-
-INSERT INTO eventos (nome_evento, organizador, localizacao, data_inicio, data_fim) VALUES
-('IEM Katowice 2025', 'ESL', 'Katowice, Polônia', '2025-01-10', '2025-01-25'),
-('ESL Pro League S19', 'ESL', 'Online/Europe', '2025-02-05', '2025-02-16'),
-('Blast Premier 2025', 'Blast', 'Copenhagen, Dinamarca', '2025-03-15', '2025-03-30'),
-('PGL Major 2025', 'PGL', 'Bucareste, Romênia', '2025-04-20', '2025-05-04'),
-('IEM Cologne 2025', 'ESL', 'Colônia, Alemanha', '2025-05-12', '2025-05-25'),
-('ESL One 2025', 'ESL', 'Berlim, Alemanha', '2025-06-08', '2025-06-15'),
-('Blast World Final 2025', 'Blast', 'Abu Dhabi, EAU', '2025-07-22', '2025-07-27'),
-('IEM Rio 2025', 'ESL', 'Rio de Janeiro, Brasil', '2025-08-14', '2025-08-24'),
-('Thunderpick WC 2025', 'Thunderpick', 'Online/Global', '2025-09-05', '2025-09-16'),
-('Gamers8 2025', 'Saudi Esports Federation', 'Riade, Arábia Saudita', '2025-10-10', '2025-10-21')
