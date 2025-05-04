@@ -23,17 +23,16 @@ DECLARE
     ultima_match RECORD;
     data_hora_ultima_match TEXT;
 BEGIN
-    SELECT array_agg(match_id)
+    SELECT array_agg(m.match_id)
     INTO partidas_array
-    FROM matches
-    WHERE
-	(
-     		(team1_name = time_a AND team2_name = time_b)
-        	OR
-        	(team1_name = time_b AND team2_name = time_a)
-     	)
-     	AND
-     	(maps = mapa OR mapa IS NULL);
+    FROM matches as m
+    INNER JOIN times as t1 ON t1.time_id = m.team1_id
+    INNER JOIN times as t2 ON t2.time_id = m.team2_id
+    WHERE (
+        (t1.nome_time = time_a AND t2.nome_time = time_b) OR
+        (t1.nome_time = time_b AND t2.nome_time = time_a)
+    )
+    AND (m.maps = mapa OR mapa IS NULL);
 
     IF partidas_array IS NULL THEN
         RETURN QUERY SELECT COALESCE(mapa, 'Todos'), 0, 0, 0, 'Não há', 'Não há';
@@ -43,21 +42,28 @@ BEGIN
     total_partidas := cardinality(partidas_array);
 
     FOR i IN 1..total_partidas LOOP
-        SELECT * INTO partidas FROM matches WHERE match_id = partidas_array[i];
+        SELECT m.*, t1.nome_time AS team1_name, t2.nome_time AS team2_name
+        INTO partidas
+        FROM matches m
+        JOIN times t1 ON t1.time_id = m.team1_id
+        JOIN times t2 ON t2.time_id = m.team2_id
+        WHERE m.match_id = partidas_array[i];
 
-        IF partidas.team1_name = time_a AND partidas.team1_result > partidas.team2_result OR
-        	partidas.team2_name = time_a AND partidas.team2_result > partidas.team1_result THEN
-            	cont_vitorias_a := cont_vitorias_a + 1;
+        IF (partidas.team1_name = time_a AND partidas.team1_result > partidas.team2_result) OR
+           (partidas.team2_name = time_a AND partidas.team2_result > partidas.team1_result) THEN
+            cont_vitorias_a := cont_vitorias_a + 1;
         ELSE
             cont_vitorias_b := cont_vitorias_b + 1;
         END IF;
     END LOOP;
 
-    SELECT *
+    SELECT m.*, t1.nome_time AS team1_name, t2.nome_time AS team2_name
     INTO ultima_match
-    FROM matches
-    WHERE match_id = ANY (partidas_array)
-    ORDER BY match_time DESC
+    FROM matches m
+    JOIN times t1 ON t1.time_id = m.team1_id
+    JOIN times t2 ON t2.time_id = m.team2_id
+    WHERE m.match_id = ANY (partidas_array)
+    ORDER BY m.match_time DESC
     LIMIT 1;
 
     IF ultima_match.team1_result > ultima_match.team2_result THEN
@@ -77,6 +83,7 @@ BEGIN
         vencedor_ultima_match;
 END;
 $$ LANGUAGE plpgsql;
+
 
 SELECT * FROM analisar_confrontos('Faze Clan', 'NaVi');
 SELECT * FROM analisar_confrontos('Faze Clan', 'NaVi', 'Mirage');
