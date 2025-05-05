@@ -15,9 +15,16 @@ DECLARE
 BEGIN
     SELECT COUNT(*)
     INTO total_partidas
-    FROM matches
-    WHERE (evento_nome IS NULL OR event_name = evento_nome)
-      AND (time_escolhido IS NULL OR team1_name = time_escolhido OR team2_name = time_escolhido);
+    FROM matches m
+    JOIN eventos e ON m.evento_id = e.evento_id
+    JOIN times t1 ON m.team1_id = t1.time_id
+    JOIN times t2 ON m.team2_id = t2.time_id
+    WHERE (evento_nome IS NULL OR e.nome_evento = evento_nome)
+      AND (
+            time_escolhido IS NULL 
+         OR t1.nome_time = time_escolhido 
+         OR t2.nome_time = time_escolhido
+      );
 
     IF total_partidas = 0 THEN
         RETURN;
@@ -25,16 +32,16 @@ BEGIN
 
     RETURN QUERY
     SELECT
-        CONCAT(GREATEST(team1_result, team2_result), 'x', LEAST(team1_result, team2_result)) AS placar,
+        CONCAT(GREATEST(m.team1_result, m.team2_result), 'x', LEAST(m.team1_result, m.team2_result)) AS placar,
         COUNT(*) AS quantidade,
-        ROUND((COUNT(*) * 100.0) / total_partidas, 2) AS percentual,
-        
+        ROUND(COUNT(*) * 100.0 / total_partidas, 2) AS percentual,
+
         CASE
             WHEN time_escolhido IS NOT NULL THEN
                 SUM(
                     CASE
-                        WHEN (team1_name = time_escolhido AND team1_result > team2_result) 
-                          OR (team2_name = time_escolhido AND team2_result > team1_result)
+                        WHEN (t1.nome_time = time_escolhido AND m.team1_result > m.team2_result)
+                          OR (t2.nome_time = time_escolhido AND m.team2_result > m.team1_result)
                         THEN 1 ELSE 0
                     END
                 )
@@ -46,8 +53,8 @@ BEGIN
                 ROUND(
                     SUM(
                         CASE
-                            WHEN (team1_name = time_escolhido AND team1_result > team2_result) 
-                              OR (team2_name = time_escolhido AND team2_result > team1_result)
+                            WHEN (t1.nome_time = time_escolhido AND m.team1_result > m.team2_result)
+                              OR (t2.nome_time = time_escolhido AND m.team2_result > m.team1_result)
                             THEN 1 ELSE 0
                         END
                     ) * 100.0 / COUNT(*), 2
@@ -55,12 +62,19 @@ BEGIN
             ELSE NULL
         END AS percentual_vitorias_time
 
-    FROM matches
-    WHERE (evento_nome IS NULL OR event_name = evento_nome)
-      AND (time_escolhido IS NULL OR team1_name = time_escolhido OR team2_name = time_escolhido)
+    FROM matches m
+    JOIN eventos e ON m.evento_id = e.evento_id
+    JOIN times t1 ON m.team1_id = t1.time_id
+    JOIN times t2 ON m.team2_id = t2.time_id
+    WHERE (evento_nome IS NULL OR e.nome_evento = evento_nome)
+      AND (
+            time_escolhido IS NULL 
+         OR t1.nome_time = time_escolhido 
+         OR t2.nome_time = time_escolhido
+      )
     GROUP BY 
-        GREATEST(team1_result, team2_result), 
-        LEAST(team1_result, team2_result)
+        GREATEST(m.team1_result, m.team2_result), 
+        LEAST(m.team1_result, m.team2_result)
     ORDER BY quantidade DESC;
 END;
 $$ LANGUAGE plpgsql;
