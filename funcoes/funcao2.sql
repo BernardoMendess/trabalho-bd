@@ -21,16 +21,16 @@ DECLARE
     cont_vitorias_b INT := 0;
     total_partidas INT := 0;
     vencedor_ultima_partida TEXT;
-	data_hora_ultima_partida TEXT;
+    data_hora_ultima_partida TEXT;
 BEGIN
     FOR partida IN
         SELECT 
             m.*,
             t1.nome_time AS team1_name,
             t2.nome_time AS team2_name
-        FROM matches m
-        INNER JOIN times t1 ON t1.time_id = m.team1_id
-        INNER JOIN times t2 ON t2.time_id = m.team2_id
+        FROM matches AS m
+        INNER JOIN times AS t1 ON t1.time_id = m.team1_id
+        INNER JOIN times AS t2 ON t2.time_id = m.team2_id
         WHERE (
             (t1.nome_time = time_a AND t2.nome_time = time_b) OR
             (t1.nome_time = time_b AND t2.nome_time = time_a)
