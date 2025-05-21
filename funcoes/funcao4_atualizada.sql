@@ -40,9 +40,7 @@ DECLARE
 BEGIN
     DROP TABLE IF EXISTS aux_table;
     
-    
-    CREATE TEMP TABLE aux_table AS
-        SELECT 
+    FOR jogo_aux IN SELECT 
             m.*,
             t1.nome_time AS team1_name,--msm coisa q a func antiga, so muda isso para pegar os nomes q agr estão na outra tab
             t2.nome_time AS team2_name
@@ -52,14 +50,11 @@ BEGIN
         WHERE (t1.nome_time = time_escolhido OR t2.nome_time = time_escolhido)
           AND m.match_time >= data_param::TIMESTAMP
           AND m.match_time <= data_param::TIMESTAMP + ((semana_param * 7) + (mes_param * 30) || ' days')::INTERVAL
-        ORDER BY m.match_time;
+        ORDER BY m.match_time
 
-    
-    FOR jogo_aux IN SELECT * FROM aux_table
     LOOP
         num_total_aux := num_total_aux + 1;
 
-        
         IF (jogo_aux.team1_name = time_escolhido AND jogo_aux.team1_result = 16 AND jogo_aux.team1_result > jogo_aux.team2_result) OR
            (jogo_aux.team2_name = time_escolhido AND jogo_aux.team2_result = 16 AND jogo_aux.team2_result > jogo_aux.team1_result) THEN
             aux_seq_max := aux_seq_max + 1;
