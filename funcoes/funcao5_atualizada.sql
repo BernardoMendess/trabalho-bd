@@ -20,22 +20,6 @@ DECLARE
     pontuacao_perde INTEGER := 0;
     novo_ranking BIGINT := 1;
 BEGIN
-    DROP TABLE IF EXISTS aux_matches_r;
-    CREATE TEMP TABLE aux_matches_r AS
-    SELECT 
-        m.*,
-        t1.nome_time AS team1_name,
-        t1.ranking_atual AS team1_ranking,
-        t2.nome_time AS team2_name,
-        t2.ranking_atual AS team2_ranking,
-        e.nome_evento
-    FROM matches m
-    JOIN times t1 ON m.team1_id = t1.time_id
-    JOIN times t2 ON m.team2_id = t2.time_id
-    JOIN eventos e ON m.evento_id = e.evento_id
-    WHERE DATE(m.match_time) BETWEEN data_olhada AND data_determinada
-    ORDER BY m.match_time;
-
     DROP TABLE IF EXISTS resultado_pontuacoes;
     CREATE TEMP TABLE resultado_pontuacoes (
         nome_time_resultado VARCHAR(100),
@@ -45,7 +29,19 @@ BEGIN
         pontuacao_resultado BIGINT
     );
 
-    FOR jogo_aux IN SELECT * FROM aux_matches_r
+    FOR jogo_aux IN SELECT  
+        m.*,
+        t1.nome_time AS team1_name,
+        t1.ranking_atual AS team1_ranking,
+        t2.nome_time AS team2_name,
+        t2.ranking_atual AS team2_ranking,
+        e.nome_evento
+        FROM matches m
+        JOIN times t1 ON m.team1_id = t1.time_id
+        JOIN times t2 ON m.team2_id = t2.time_id
+        JOIN eventos e ON m.evento_id = e.evento_id
+        WHERE DATE(m.match_time) BETWEEN data_olhada AND data_determinada
+        ORDER BY m.match_time
     LOOP
         pontuacao_ganha := 0;
         pontuacao_perde := 0;
@@ -113,7 +109,6 @@ BEGIN
         END IF;
 
     END LOOP;
-
     
     FOR resultado_aux IN
         SELECT nome_time_resultado, pontuacao_resultado
